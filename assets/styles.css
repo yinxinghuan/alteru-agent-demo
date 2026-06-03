@@ -982,11 +982,12 @@ code {
   pointer-events: auto;
 }
 
-/* Toolbar: 38px tall, px 20 — BrandLogotype 56.667×38 left + icon strip 30/30/35 right */
+/* Toolbar: ~46px tall, px 18 — BrandLogotype enlarged from Figma 57x38 to
+ * 78x52 so it reads at demo viewing distance. Icons keep 30×30 / avatar 35. */
 .feed-view__toolbar {
-  flex: 0 0 38px;
-  height: 38px;
-  padding: 0 20px;
+  flex: 0 0 52px;
+  height: 52px;
+  padding: 0 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1000,11 +1001,11 @@ code {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  height: 38px;
+  height: 52px;
 }
 .feed-view__brand img {
-  width: 57px;
-  height: 38px;
+  width: 78px;
+  height: 52px;
   object-fit: contain;
   image-rendering: -webkit-optimize-contrast;
   transition: transform .15s, filter .15s;

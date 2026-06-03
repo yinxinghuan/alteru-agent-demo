@@ -200,14 +200,14 @@
   // =========================================================================
 
   function renderAgent(text, opts = {}) {
-    const { row, bubble: b } = bubble("agent", text);
+    const { row, bubble: b } = bubble("agent", tx(text));
     if (opts.cta && opts.cta.length) {
       const wrap = el("div", { class: "task__cta", style: "margin-top:10px" });
       opts.cta.forEach((label, i) => {
         const btn = el("button", {
           class: i === 0 ? "btn btn--primary" : "btn",
           type: "button",
-        }, [label]);
+        }, [tx(label)]);
         bindAgentCtaBtn(btn, label, opts.ctaTaskId);
         wrap.appendChild(btn);
       });
@@ -217,12 +217,12 @@
     return row;
   }
   function renderUser(text) {
-    const { row } = bubble("user", text);
+    const { row } = bubble("user", tx(text));
     chat.appendChild(row);
     return row;
   }
   function renderSystem(text) {
-    const { row } = bubble("system", text);
+    const { row } = bubble("system", tx(text));
     chat.appendChild(row);
     return row;
   }
@@ -255,7 +255,7 @@
             submitUserText(label);
           }
         },
-      }, [label]));
+      }, [tx(label)]));
     });
     const row = el("div", { class: "msg msg--agent" }, [
       avatarNode(),
@@ -270,10 +270,10 @@
     if (t.state === "fail") cover.textContent = "✕";
     else if (t.cover) cover.appendChild(el("img", { src: COVERS[t.cover], alt: "" }));
 
-    const sub = el("span", {}, [t.sub || ""]);
+    const sub = el("span", {}, [txProgress(t.sub || "")]);
     const stateLine = el("div", { class: "task__state" }, [sub]);
     const body = el("div", { class: "task__body" }, [
-      el("div", { class: "task__title" }, [t.title]),
+      el("div", { class: "task__title" }, [tx(t.title)]),
       stateLine,
     ]);
     if (t.state === "generating") {
@@ -299,7 +299,7 @@
                   label === "Publish" ? "btn btn--primary" :
                   label === "Delete" ? "btn btn--ghost" :
                   i === 0 ? "btn btn--primary" : "btn";
-      const btn = el("button", { class: cls, type: "button" }, [label]);
+      const btn = el("button", { class: cls, type: "button" }, [tx(label)]);
       btn.addEventListener("click", () => handleTaskCta(taskId, label, btn));
       cta.appendChild(btn);
     });
@@ -307,7 +307,7 @@
   }
 
   function renderTaskList(spec) {
-    const head = el("div", { class: "task-list__head" }, [spec.title || "In progress"]);
+    const head = el("div", { class: "task-list__head" }, [tx(spec.title || "In progress")]);
     const list = el("div", { class: "task-list", "data-tl-id": spec.id }, [head]);
     spec.tasks.forEach(t => list.appendChild(taskNode(t)));
     const row = el("div", { class: "msg msg--agent" }, [
@@ -327,7 +327,7 @@
     }
     if (patch.sub != null) {
       const sub = node.querySelector(".task__state > span");
-      if (sub) sub.textContent = patch.sub;
+      if (sub) sub.textContent = txProgress(patch.sub);
     }
     if (patch.state) {
       node.className = `task task--${patch.state}`;
@@ -353,8 +353,8 @@
     spec.stats.forEach(s => {
       stats.appendChild(el("div", {}, [
         el("div", { class: "val" }, [s.val]),
-        el("div", { class: "lbl" }, [s.lbl]),
-        s.delta ? el("div", { class: "delta" }, [s.delta]) : null,
+        el("div", { class: "lbl" }, [tx(s.lbl)]),
+        s.delta ? el("div", { class: "delta" }, [tx(s.delta)]) : null,
       ]));
     });
     const bars = el("div", { class: "bars" });
@@ -364,12 +364,12 @@
       bars.appendChild(el("i", { style: `height:${ratio * 100}%; animation-delay:${i * 40}ms;` }));
     });
     const card = el("div", { class: "insight" }, [
-      el("div", { class: "insight__head" }, [spec.head || "Reading Log · 12 days"]),
+      el("div", { class: "insight__head" }, [tx(spec.head || "Reading Log · 12 days")]),
       stats,
       bars,
       el("div", { class: "bars__legend" }, [
-        el("span", {}, ["Mon"]),
-        el("span", {}, ["Yesterday ↗"]),
+        el("span", {}, [tx("Mon")]),
+        el("span", {}, [tx("Yesterday ↗")]),
       ]),
     ]);
     const row = el("div", { class: "msg msg--agent" }, [
@@ -386,7 +386,7 @@
       const tile = el("div", { class: "feed__tile", "data-cover": it.cover, "data-title": it.title }, [
         el("img", { src: COVERS[it.cover], alt: it.title }),
         el("span", {}, [
-          document.createTextNode(it.title),
+          document.createTextNode(tx(it.title)),
           it.score ? el("em", {}, [it.score]) : null,
         ].filter(Boolean)),
       ]);
@@ -395,8 +395,8 @@
     });
     const tagClass = spec.tag === "personal" ? "feed__tag feed__tag--personal" : "feed__tag feed__tag--generic";
     const head = el("div", { class: "feed__head" }, [
-      el("span", {}, [spec.title]),
-      el("span", { class: tagClass }, [spec.tag === "personal" ? "Profile" : "Global rule"]),
+      el("span", {}, [tx(spec.title)]),
+      el("span", { class: tagClass }, [tx(spec.tag === "personal" ? "Profile" : "Global rule")]),
     ]);
     const feed = el("div", { class: "feed" }, [head, grid]);
     const row = el("div", { class: "msg msg--agent" }, [
@@ -408,7 +408,7 @@
   }
 
   function renderWhyCard(text) {
-    const card = el("div", { class: "why-this", html: text });
+    const card = el("div", { class: "why-this", html: tx(text) });
     card.style.cursor = "pointer";
     card.addEventListener("click", () => submitUserText("Why this?"));
     const row = el("div", { class: "msg msg--agent" }, [
@@ -487,37 +487,207 @@
       "scenario.personalize.blurb": "D1 · 同一个推荐池，按 Agent 维护的用户画像重新排序。UI 不变 —— 变的是顺序。",
       "scenario.personalize.caps":  ["D1 画像", "同池不同序"],
     },
-    mix: {
-      "callout.heading": "AlterU Agent",
-      "callout.p1": 'App 内对话式 Agent 的可运行草稿，对应 <code>v2.2</code> 设计文档：创作中枢 · 数据洞察 · Feed 个性化 · 连接推荐。',
-      "callout.p2": "<strong>可操作 demo。</strong>输入框 / suggestion chips / 任务 CTA（Preview / Publish / Retry / Delete）/ feed 卡都有真实响应。或点上方 scenario chip 重放剧本。",
-      "legend.label": "SCENARIO",
-      "tour.label":   "NEXT CHAPTER",
-      "footer.demo":  "Demo · v2.2 design",
-      "footer.link":  "source",
-      "composer.placeholder": '随便说——试试 "make a piece about rain"',
-      "chip.welcome":  "Welcome",
-      "chip.create":   "Create",
-      "chip.insight":  "Insight",
-      "chip.tune":     "Tune",
-      "chip.compare":  "Compare",
-      "scenario.welcome.title":     "Cold start",
-      "scenario.welcome.blurb":     "首次进入。Welcome 一句 + 三个具体 prompt。下方 composer 是真 input，随便打字。",
-      "scenario.welcome.caps":      ["Cold start", "Suggestion chips", "Free input"],
-      "scenario.create.title":      "Creation hub",
-      "scenario.create.blurb":      "A1 → A2 → A4。自然语言 kick-off、live task list、完成通知落在对话流。CTA 全部 live — Preview / Publish / Retry / Delete。",
-      "scenario.create.caps":       ["A1 kick-off", "A2 task list", "A4 completion", "Live CTAs"],
-      "scenario.insight.title":     "Data lens",
-      "scenario.insight.blurb":     "B · 自然语言提问，Agent 通过 tool use 调真实数据回答。可以追问 \"who came back\" 或 \"best moment\"。",
-      "scenario.insight.caps":      ["B insight", "Tool use", "Follow-up"],
-      "scenario.tune.title":        "Feed tuning",
-      "scenario.tune.blurb":        "D2 · 在已经 personalised 的 feed 上做对话式调教。Agent 确认 + 解释 + 写进长期画像。点 Why this 卡看背后逻辑。",
-      "scenario.tune.caps":         ["D2 tune", "Profile transparency", "Why this"],
-      "scenario.personalize.title": "Before / after",
-      "scenario.personalize.blurb": "D1 · 同一个推荐池，按 Agent 画像 re-rank。UI 不变 — 顺序变了。",
-      "scenario.personalize.caps":  ["D1 profile", "Same pool, different rank"],
-    },
   };
+
+  // Phone-side translations.  Keyed by the English source text (including
+  // any inline <strong>/<em>/<br> markup).  Anything not in the table
+  // falls back to the original English string.
+  const ZH_PHONE = {
+    // Welcome
+    "<strong>Hi.</strong> I'm AlterU Agent.": "<strong>你好。</strong>我是 AlterU Agent。",
+    "Three things I can do right now: start a new piece, look at how your work is doing, and shape the feed you see. Tap one to try, or just tell me what you're after.":
+      "我现在能帮你做三件事：开一个新作品、看你作品的表现、调你看到的 feed。点一个试试，或者直接告诉我你想做什么。",
+    "Make a piece about a rainy alley at 2 AM": "做一个关于凌晨两点雨夜小巷的作品",
+    "How did Reading Log do yesterday?": "Reading Log 昨天表现怎么样？",
+    "Less horror in my feed": "feed 里少推恐怖类",
+    "Open my feed": "打开我的 feed",
+    "Show my profile": "看我的主页",
+
+    // Create — scripted
+    "Pick up where you left off, or start fresh?": "继续上次没完成的，还是从头开始？",
+    "make a piece about the decision at 3 AM": "做一个关于凌晨三点的决定的作品",
+    "Good prompt. Spinning it up — <strong>Late-Night Decision</strong>. Cover generating, first-screen video queued.":
+      "好题。开工——<strong>凌晨三点的决定</strong>。封面生成中，首屏视频排队。",
+    "Late-Night Decision":          "凌晨三点的决定",
+    "Reading Log":                  "读书打卡",
+    "Y":                            "Y",
+    "First-screen video ready":     "首屏视频已就绪",
+    "OSS upload timeout · attempt 1/3": "OSS 上传超时 · 第 1/3 次重试",
+    "1 new":                        "新通知 1 条",
+    "<strong>Late-Night Decision</strong> is ready. Cover and first-screen video are queued for your eyes only until you publish.":
+      "<strong>凌晨三点的决定</strong>已就绪。封面和首屏视频只给你预览，发布前别人看不到。",
+
+    // Task list
+    "In progress":                  "进行中",
+
+    // Task subs / progress labels
+    "Cover · 14%":                  "封面 · 14%",
+    "Cover · 38%":                  "封面 · 38%",
+    "Cover · 71%":                  "封面 · 71%",
+    "Cover · 12%":                  "封面 · 12%",
+    "Cover · 48%":                  "封面 · 48%",
+    "Cover · 88%":                  "封面 · 88%",
+    "Done":                         "完成",
+
+    // Task CTAs
+    "Preview":                      "预览",
+    "Publish":                      "发布",
+    "Retry":                        "重试",
+    "Open":                         "打开",
+    "Delete":                       "删除",
+    "Draft a caption":              "起个标题",
+    "Not yet":                      "先不",
+    "Undo":                         "撤回",
+    "Push to feed":                 "推到 feed",
+    "Less from this author":        "少看这位作者",
+    "Same vibe, more please":       "同款氛围，多来点",
+
+    // Publish / Works
+    "<strong>Late-Night Decision</strong> is live in your Works. Want me to drop it into the feed pool?":
+      "<strong>凌晨三点的决定</strong>已上 Works。要顺便推进 feed 池吗？",
+    "Now in your Works":            "已加进 Works",
+    "Mirror, Mirror":               "镜子，镜子",
+
+    // Insight
+    "What do you want to know?":    "想看什么数据？",
+    "how did Reading Log do yesterday?": "Reading Log 昨天表现怎么样？",
+    "<strong>Reading Log · yesterday</strong>. 1,247 plays, average dwell <strong>2:18</strong> — 34% above last Wednesday.":
+      "<strong>读书打卡 · 昨天</strong>。1,247 次播放，平均停留 <strong>2:18</strong> —— 比上周三高 34%。",
+    "Plays":                        "播放",
+    "Avg dwell":                    "平均停留",
+    "Completion":                   "完播率",
+    "+34% w/w":                     "周环比 +34%",
+    "Top in your library":          "你库里最高",
+    "+8 pp vs median":              "高出中位数 8 个百分点",
+    "Reading Log · 12 days":        "读书打卡 · 近 12 天",
+    "Mon":                          "周一",
+    "Yesterday ↗":                  "昨天 ↗",
+    "Longest single session was <strong>11:02</strong> from @junning. They came back twice in the next 24h — high-confidence signal for your feed.":
+      "最长一次会话 <strong>11:02</strong> 来自 @junning。24 小时内还回来过两次 —— 高置信信号，feed 会加权。",
+
+    // Tune
+    "Tell me what you want more or less of.": "告诉我哪类多看、哪类少看。",
+    "less horror in my feed":       "feed 里少看一些恐怖类",
+    "Noted. <em>Horror</em> weight in your profile is down to <strong>0.2</strong>. You won't see it in the next 24h, and the preference is saved long-term unless you tell me otherwise.":
+      "已记下。画像里 <em>恐怖</em> 权重降到 <strong>0.2</strong>。未来 24 小时不再推；长期保存，除非你说改回去。",
+    "<strong>Why this?</strong> — tap any feed card to ask in context.":
+      "<strong>Why this?</strong> —— 任何 feed 卡上点这个，就在那个上下文里追问。",
+    "You watched three horror shorts to completion in early May — single-session, no skips. The model read that as strong signal. I've discounted it now.":
+      "你 5 月初连看完了 3 部恐怖短片 —— 单次完整、没快进。模型把这当强信号。现在已经把它的权重压下去了。",
+    "Your consumption profile, short version: <em>moody narrative</em>, <em>late-night peak (12-2am)</em>, <em>slow pacing preferred</em>, <em>horror down to 0.2</em>. Long version takes a whole screen — coming in v2.":
+      "你的消费画像简版：<em>moody 叙事</em>、<em>夜间高峰 (12-2 点)</em>、<em>偏爱慢节奏</em>、<em>恐怖类降到 0.2</em>。完整版要整屏 —— v2 再做。",
+    "Undone. Profile is back to where it was.": "已撤回。画像回到之前的状态。",
+    "OK, I'll hold off.":           "好，先放一放。",
+    "Noted. Author weight dropped — you'll see them less for the next 7 days unless you tell me otherwise.":
+      "已记下。作者权重已降 —— 接下来 7 天少推；除非你告诉我改回去。",
+    "Locked in. I'll bias your feed toward this mood for the next session.":
+      "锁定。下次刷的时候 feed 会偏向这个氛围。",
+
+    // Compare / Before-after
+    "Your feed before the profile kicked in. Global rule, everybody saw the same mix.":
+      "画像启用之前的 feed。全局规则，所有人一样的内容。",
+    "Once the profile sees what you've been making and when you've been awake — same pool, new rank.":
+      "一旦画像看见你做了什么、几点醒着 —— 同一个池，新的排序。",
+    "You make moody narrative pieces, you're awake past 1 AM, you finished two slow-paced titles this week. That's the signal — not a global rule.":
+      "你做 moody 叙事、凌晨 1 点后还醒着、本周看完了两部慢节奏作品。这就是信号 —— 不是全局规则。",
+    "Feed · v0 (global rule)":      "Feed · v0（全局规则）",
+    "Feed · v1 (profile)":          "Feed · v1（画像）",
+    "Global rule":                  "全局规则",
+    "Profile":                      "画像",
+    "Konbini at 2 AM":              "凌晨两点的便利店",
+    "Coffee in Rain":               "雨中咖啡",
+    "Last Train Home":              "回家的末班车",
+
+    // Feed view + Why-this loop
+    "Why this one?":                "为什么推这条？",
+    "by you":                       "by 你",
+    "by Ava":                       "by Ava",
+    "by Ren":                       "by Ren",
+    "by Jin":                       "by Jin",
+    "by Sam":                       "by Sam",
+    "Why this?":                    "Why this?",
+    "tap for Agent":                "点这里开 Agent",
+    "Agent":                        "Agent",
+    "Cold start":                   "冷启动",
+    "Creation hub":                 "创作中枢",
+    "Data lens":                    "数据洞察",
+    "Feed tuning":                  "Feed 调教",
+    "Before / after":               "前后对比",
+
+    // Free-form respondTo dynamic text
+    "What's it about? Give me a sentence — a mood, a scene, an opening line.":
+      "讲讲是关于什么的？给我一句话 —— 一种心情、一个场景、一句开场白。",
+    "Untitled":                     "未命名",
+
+    // Deflect
+    "I can kick off a new piece, look at how your work is doing, or shape your feed. Want one of those — or just describe what you have in mind?":
+      "我可以帮你开个新作品、看作品数据、或调你的 feed。挑一个，或者直接告诉我你脑子里有啥。",
+
+    // Misc
+    "Published · 2s ago":           "已发布 · 2s 前",
+    "Retry worked. Cover is in.":   "重试成功。封面好了。",
+
+    // Templates with __VAR__ placeholders for respondTo / handleTaskCta
+    "Good prompt. Spinning up <strong>__TITLE__</strong>. Cover generating.":
+      "好题。开工 —— <strong>__TITLE__</strong>。封面生成中。",
+    "<strong>__TITLE__</strong> is ready. Cover and first-screen video are queued for your eyes only until you publish.":
+      "<strong>__TITLE__</strong>已就绪。封面和首屏视频只给你预览，发布前别人看不到。",
+    "<strong>__PIECE__ · yesterday</strong>. 1,247 plays, average dwell <strong>2:18</strong> — 34% above last Wednesday.":
+      "<strong>__PIECE__ · 昨天</strong>。1,247 次播放，平均停留 <strong>2:18</strong> —— 比上周三高 34%。",
+    "__PIECE__ · 12 days":          "__PIECE__ · 近 12 天",
+    "Longest single session was <strong>11:02</strong> from @junning. Returned twice in 24h — high-confidence signal.":
+      "最长一次会话 <strong>11:02</strong> 来自 @junning。24 小时内还回来过两次 —— 高置信信号。",
+    "Noted. <em>__TOPIC__</em> weight in your profile is __DIR__ <strong>__VALUE__</strong>. Saved long-term unless you tell me otherwise.":
+      "已记下。画像里 <em>__TOPIC__</em> 权重 __DIR__ <strong>__VALUE__</strong>。长期保存，除非你说改回去。",
+    "down to":                      "降到",
+    "up to":                        "升到",
+    "<strong>__TITLE__</strong> is live in your Works. Want me to drop it into the feed pool?":
+      "<strong>__TITLE__</strong>已上 Works。要顺便推进 feed 池吗？",
+    "your top piece":               "你最热的作品",
+    "<strong>__TITLE__</strong> ranked <strong>__SCORE__</strong> in your profile because __REASON__. Want me to drop the weight on this one author, or this whole vibe?":
+      "<strong>__TITLE__</strong> 在你画像里得分 <strong>__SCORE__</strong>，因为 __REASON__。要降低这位作者的权重，还是整个氛围的权重？",
+
+    // FEED_POOL reasons
+    "you're up past 1 AM and you make moody narrative pieces yourself":
+      "你凌晨 1 点后还醒着，自己也在做 moody 叙事",
+    "themes overlap with your last two pieces":
+      "和你最近两个作品的主题重合",
+    "you finished two slow-paced titles this week":
+      "你这周看完了两部慢节奏作品",
+    "Jin's last piece pulled an 11-min dwell from you":
+      "Jin 上一个作品让你停留了 11 分钟",
+    "midnight ambient — your peak hours":
+      "深夜氛围 —— 你的高峰时段",
+    "your own work — you usually rewatch on day 2":
+      "你自己的作品 —— 通常第二天会再看一次",
+  };
+
+  // Look up a template in ZH_PHONE (or fall back to EN), then substitute
+  // __VAR__ placeholders.
+  function txt(en, vars) {
+    let s = currentLang === "zh" && ZH_PHONE[en] ? ZH_PHONE[en] : en;
+    if (vars) {
+      Object.keys(vars).forEach(k => {
+        s = s.replace(new RegExp(`__${k}__`, "g"), vars[k]);
+      });
+    }
+    return s;
+  }
+
+  function tx(s) {
+    if (typeof s !== "string") return s;
+    if (currentLang === "zh" && Object.prototype.hasOwnProperty.call(ZH_PHONE, s)) {
+      return ZH_PHONE[s];
+    }
+    return s;
+  }
+  // Translate task progress label like "Cover · 38%" / "Retrying · 55%"
+  function txProgress(s) {
+    if (currentLang !== "zh" || typeof s !== "string") return tx(s);
+    return s.replace(/^Cover\b/, "封面")
+            .replace(/^Retrying\b/, "重试中")
+            .replace(/^Done$/, "完成");
+  }
 
   let currentLang = (() => {
     try { return localStorage.getItem("alteru-demo-lang") || "en"; }
@@ -672,7 +842,7 @@
     const tid = uid();
     const cover = randomCover();
     await runMini([
-      { type: "agent", text: `Good prompt. Spinning up <strong>${escapeHtml(title)}</strong>. Cover generating.` },
+      { type: "agent", text: txt("Good prompt. Spinning up <strong>__TITLE__</strong>. Cover generating.", { TITLE: escapeHtml(title) }) },
       { type: "tasklist", id: "tl-" + tid, title: "In progress", tasks: [
         { id: tid, title: title, state: "generating", progress: 12, sub: "Cover · 12%" },
       ]},
@@ -683,7 +853,7 @@
       { type: "wait", ms: 700 },
       { type: "progress", taskId: tid, progress: 100, sub: "Done", cover: cover, state: "ok", cta: ["Preview", "Publish"] },
       { type: "wait", ms: 500 },
-      { type: "agent", text: `<strong>${escapeHtml(title)}</strong> is ready. Cover and first-screen video are queued for your eyes only until you publish.`, cta: ["Preview", "Publish"], ctaTaskId: tid },
+      { type: "agent", text: txt("<strong>__TITLE__</strong> is ready. Cover and first-screen video are queued for your eyes only until you publish.", { TITLE: escapeHtml(title) }), cta: ["Preview", "Publish"], ctaTaskId: tid },
     ]);
   }
 
@@ -722,9 +892,10 @@
                     /late.?night|decision/i.test(text) ? "Late-Night Decision" :
                     /mirror/i.test(text) ? "Mirror, Mirror" :
                     "your top piece";
+      const pieceL = tx(piece);
       await runMini([
-        { type: "agent", text: `<strong>${piece} · yesterday</strong>. 1,247 plays, average dwell <strong>2:18</strong> — 34% above last Wednesday.` },
-        { type: "insight", head: `${piece} · 12 days`, stats: [
+        { type: "agent", text: txt("<strong>__PIECE__ · yesterday</strong>. 1,247 plays, average dwell <strong>2:18</strong> — 34% above last Wednesday.", { PIECE: pieceL }) },
+        { type: "insight", head: txt("__PIECE__ · 12 days", { PIECE: pieceL }), stats: [
           { val: "1,247", lbl: "Plays", delta: "+34% w/w" },
           { val: "2:18",  lbl: "Avg dwell", delta: "Top in your library" },
           { val: "71%",   lbl: "Completion", delta: "+8 pp vs median" },
@@ -743,8 +914,9 @@
                     "that";
       const direction = lessMatch ? "down" : moreMatch ? "up" : "down";
       const value = direction === "up" ? "0.7" : "0.2";
+      const dirLabel = tx(direction === "up" ? "up to" : "down to");
       await runMini([
-        { type: "agent", text: `Noted. <em>${escapeHtml(topic)}</em> weight in your profile is ${direction === "up" ? "up to" : "down to"} <strong>${value}</strong>. Saved long-term unless you tell me otherwise.` },
+        { type: "agent", text: txt("Noted. <em>__TOPIC__</em> weight in your profile is __DIR__ <strong>__VALUE__</strong>. Saved long-term unless you tell me otherwise.", { TOPIC: escapeHtml(topic), DIR: dirLabel, VALUE: value }) },
         { type: "suggestions", items: ["Undo", "Show my profile"] },
         { type: "wait", ms: 600 },
         { type: "why-card", text: "<strong>Why this?</strong> — tap any feed card to ask in context." },
@@ -829,7 +1001,7 @@
       await sleep(700);
       if (myToken !== runToken) return;
       t.remove();
-      renderAgent(`<strong>${escapeHtml(title)}</strong> is live in your Works. Want me to drop it into the feed pool?`);
+      renderAgent(txt("<strong>__TITLE__</strong> is live in your Works. Want me to drop it into the feed pool?", { TITLE: escapeHtml(title) }));
       renderWorksCard(cover || "late_night_decision", title);
       scrollChatToBottom();
       await sleep(300);
@@ -954,10 +1126,11 @@
     if (idx >= 0) feedCursor = idx;
     const item = FEED_POOL[feedCursor];
     feedCover.src = COVERS[item.cover];
-    feedTitle.textContent = title || item.title;
-    feedAuthor.textContent = (author || item.author) + " · 6m";
+    feedTitle.textContent = tx(title || item.title);
+    feedAuthor.textContent = tx(author || item.author) + " · 6m";
     feedView.classList.add("is-open");
     feedView.setAttribute("aria-hidden", "false");
+    refreshFeedBrandHint();
   }
   function closeFeedView() {
     feedView.classList.remove("is-open");
@@ -967,8 +1140,20 @@
     feedCursor = (feedCursor + 1) % FEED_POOL.length;
     const item = FEED_POOL[feedCursor];
     feedCover.src = COVERS[item.cover];
-    feedTitle.textContent = item.title;
-    feedAuthor.textContent = item.author + " · 6m";
+    feedTitle.textContent = tx(item.title);
+    feedAuthor.textContent = tx(item.author) + " · 6m";
+  }
+  function refreshFeedBrandHint() {
+    const hint = feedView.querySelector(".feed-view__brand-hint");
+    if (hint) hint.textContent = tx("tap for Agent");
+    const why = document.getElementById("feedWhy");
+    if (why) {
+      // text node inside the button (after the SVG)
+      const lastNode = why.childNodes[why.childNodes.length - 1];
+      if (lastNode && lastNode.nodeType === Node.TEXT_NODE) {
+        lastNode.textContent = " " + tx("Why this?");
+      }
+    }
   }
   feedBack.addEventListener("click", closeFeedView);
   feedNext.addEventListener("click", feedAdvance);
@@ -980,7 +1165,7 @@
       scrollChatToBottom();
       setTimeout(() => {
         runMini([
-          { type: "agent", text: `<strong>${escapeHtml(item.title)}</strong> ranked <strong>${item.score}</strong> in your profile because ${item.reason}. Want me to drop the weight on this one author, or this whole vibe?` },
+          { type: "agent", text: txt("<strong>__TITLE__</strong> ranked <strong>__SCORE__</strong> in your profile because __REASON__. Want me to drop the weight on this one author, or this whole vibe?", { TITLE: escapeHtml(tx(item.title)), SCORE: item.score, REASON: tx(item.reason) }) },
           { type: "suggestions", items: ["Less from this author", "Same vibe, more please", "Show my profile"] },
         ]);
       }, 480);
@@ -1009,7 +1194,7 @@
     });
     const card = el("div", { class: "works-card" }, [
       el("div", { class: "works-card__head" }, [
-        document.createTextNode("Now in your Works"),
+        document.createTextNode(tx("Now in your Works")),
         el("em", {}, ["3"]),
       ]),
       grid,
