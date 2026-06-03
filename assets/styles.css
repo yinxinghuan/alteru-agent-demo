@@ -583,11 +583,11 @@ code {
     0 1px 0 rgba(255,255,255,0.04) inset,
     0 8px 24px rgba(0,0,0,0.18);
 }
-.msg--agent .msg__bubble { border-top-left-radius: 6px; }
+.msg--agent .msg__bubble { border-bottom-left-radius: 6px; }
 .msg--user .msg__bubble {
   background: linear-gradient(135deg, rgba(245,177,199,0.20), rgba(245,177,199,0.08));
   border: 1px solid rgba(245,177,199,0.22);
-  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
   box-shadow:
     0 1px 0 rgba(255,255,255,0.06) inset,
     0 8px 24px rgba(245,177,199,0.10);
@@ -1223,10 +1223,13 @@ code {
   border-radius: 999px;
   background:
     radial-gradient(circle at 30% 30%, #ffd1a8, #8a5a32 70%);
+  background-size: cover;
+  background-position: center;
 }
 .feed-view__avatar--toolbar {
   width: 35px;
   height: 35px;
+  background-image: url("avatar-yin.png");
 }
 .feed-view__avatar--dock {
   width: 28px;
@@ -1581,6 +1584,7 @@ code {
   height: 75px;
   border-radius: 999px;
   background:
+    url("avatar-yin.png") center / cover no-repeat,
     radial-gradient(circle at 30% 30%, #ffd1a8, #8a5a32 70%);
   box-shadow: 0 4px 18px rgba(0,0,0,0.4);
 }
