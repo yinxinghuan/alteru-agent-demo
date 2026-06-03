@@ -420,6 +420,146 @@
   }
 
   // =========================================================================
+  // i18n — page chrome only.  The phone-side chat content (Agent and user
+  // messages, task labels, feed content) stays English: that IS the demo
+  // product, and AlterU is English-first per brand guidance.  Only the
+  // surrounding explanations switch languages.
+  // =========================================================================
+
+  const I18N = {
+    en: {
+      "callout.heading": "AlterU Agent",
+      "callout.p1": 'A working sketch of the in-app conversational Agent described in <code>v2.2</code>: a creation hub, a data lens, a feed-personalisation engine and a connection scout.',
+      "callout.p2": "<strong>It's interactive.</strong> Type in the composer, tap suggestion chips, tap task CTAs (Preview / Publish / Retry / Delete), tap feed cards. Or pick a chip up top to replay a scripted scenario.",
+      "legend.label": "SCENARIO",
+      "tour.label":   "NEXT CHAPTER",
+      "footer.demo":  "Demo · v2.2 design",
+      "footer.link":  "source",
+      "composer.placeholder": 'Say anything — try "make a piece about rain"',
+      "chip.welcome":  "Welcome",
+      "chip.create":   "Create",
+      "chip.insight":  "Insight",
+      "chip.tune":     "Tune",
+      "chip.compare":  "Compare",
+      "scenario.welcome.title":     "Cold start",
+      "scenario.welcome.blurb":     "First-time entry. Welcome line + three concrete prompts. The composer below is live — type whatever you want.",
+      "scenario.welcome.caps":      ["Cold start", "Suggestion chips", "Free input"],
+      "scenario.create.title":      "Creation hub",
+      "scenario.create.blurb":      "A1 → A2 → A4. Natural-language kick-off, a live task list, completion notification. Tap any CTA — Preview, Publish, Retry, Delete — they all work.",
+      "scenario.create.caps":       ["A1 kick-off", "A2 task list", "A4 completion", "Live CTAs"],
+      "scenario.insight.title":     "Data lens",
+      "scenario.insight.blurb":     "B · ask in natural language, get a tool-use answer grounded in real platform stats. Try a follow-up: ask 'who came back' or 'what was the best moment'.",
+      "scenario.insight.caps":      ["B insight", "Tool use", "Follow-up Q&A"],
+      "scenario.tune.title":        "Feed tuning",
+      "scenario.tune.blurb":        "D2 · conversational adjustments to a feed that's already personalised. Agent acknowledges, explains, and writes the change into the long-term profile. Tap the Why-this card to dig into it.",
+      "scenario.tune.caps":         ["D2 tune", "Profile transparency", "Why this"],
+      "scenario.personalize.title": "Before / after",
+      "scenario.personalize.blurb": "D1 · the same recommendation pool, ranked by Agent's user-profile signal. The UI doesn't change — only the order does.",
+      "scenario.personalize.caps":  ["D1 profile", "Same pool, different rank"],
+    },
+    zh: {
+      "callout.heading": "AlterU Agent",
+      "callout.p1": 'AlterU App 内对话式 Agent 的可运行草稿，对应 <code>v2.2</code> 设计文档：创作中枢、数据洞察、Feed 个性化引擎和连接推荐。',
+      "callout.p2": "<strong>它是可操作的。</strong>在输入框打字、点建议气泡、点任务按钮（预览 / 发布 / 重试 / 删除）、点 feed 卡片，都有真实响应。也可以直接点上方的场景标签重放剧本。",
+      "legend.label": "场景",
+      "tour.label":   "下一章节",
+      "footer.demo":  "演示 · v2.2 设计",
+      "footer.link":  "源码",
+      "composer.placeholder": '随便说点什么——试试"做一个关于雨的作品"',
+      "chip.welcome":  "欢迎",
+      "chip.create":   "创作",
+      "chip.insight":  "数据",
+      "chip.tune":     "调教",
+      "chip.compare":  "对比",
+      "scenario.welcome.title":     "冷启动",
+      "scenario.welcome.blurb":     "首次进入 Agent。一句欢迎 + 三个具体建议。下方输入框是真的——随便打字试试。",
+      "scenario.welcome.caps":      ["冷启动", "建议气泡", "自由输入"],
+      "scenario.create.title":      "创作中枢",
+      "scenario.create.blurb":      "A1 → A2 → A4。自然语言启动任务、任务清单实时刷新、完成通知出现在对话流。每个按钮都是真的——预览 / 发布 / 重试 / 删除都有反馈。",
+      "scenario.create.caps":       ["A1 启动", "A2 任务清单", "A4 完成通知", "实时按钮"],
+      "scenario.insight.title":     "数据洞察",
+      "scenario.insight.blurb":     "B · 自然语言提问，Agent 通过 tool use 调真实数据回答。可以追问：「谁回访过」「最长那段是哪里」。",
+      "scenario.insight.caps":      ["B 洞察", "Tool use", "追问"],
+      "scenario.tune.title":        "Feed 调教",
+      "scenario.tune.blurb":        "D2 · 在已经个性化的 feed 上做对话式微调。Agent 确认、解释、并把变更写进长期画像。点 Why this 卡看背后逻辑。",
+      "scenario.tune.caps":         ["D2 调教", "画像透明", "Why this"],
+      "scenario.personalize.title": "前后对比",
+      "scenario.personalize.blurb": "D1 · 同一个推荐池，按 Agent 维护的用户画像重新排序。UI 不变 —— 变的是顺序。",
+      "scenario.personalize.caps":  ["D1 画像", "同池不同序"],
+    },
+    mix: {
+      "callout.heading": "AlterU Agent",
+      "callout.p1": 'App 内对话式 Agent 的可运行草稿，对应 <code>v2.2</code> 设计文档：创作中枢 · 数据洞察 · Feed 个性化 · 连接推荐。',
+      "callout.p2": "<strong>可操作 demo。</strong>输入框 / suggestion chips / 任务 CTA（Preview / Publish / Retry / Delete）/ feed 卡都有真实响应。或点上方 scenario chip 重放剧本。",
+      "legend.label": "SCENARIO",
+      "tour.label":   "NEXT CHAPTER",
+      "footer.demo":  "Demo · v2.2 design",
+      "footer.link":  "source",
+      "composer.placeholder": '随便说——试试 "make a piece about rain"',
+      "chip.welcome":  "Welcome",
+      "chip.create":   "Create",
+      "chip.insight":  "Insight",
+      "chip.tune":     "Tune",
+      "chip.compare":  "Compare",
+      "scenario.welcome.title":     "Cold start",
+      "scenario.welcome.blurb":     "首次进入。Welcome 一句 + 三个具体 prompt。下方 composer 是真 input，随便打字。",
+      "scenario.welcome.caps":      ["Cold start", "Suggestion chips", "Free input"],
+      "scenario.create.title":      "Creation hub",
+      "scenario.create.blurb":      "A1 → A2 → A4。自然语言 kick-off、live task list、完成通知落在对话流。CTA 全部 live — Preview / Publish / Retry / Delete。",
+      "scenario.create.caps":       ["A1 kick-off", "A2 task list", "A4 completion", "Live CTAs"],
+      "scenario.insight.title":     "Data lens",
+      "scenario.insight.blurb":     "B · 自然语言提问，Agent 通过 tool use 调真实数据回答。可以追问 \"who came back\" 或 \"best moment\"。",
+      "scenario.insight.caps":      ["B insight", "Tool use", "Follow-up"],
+      "scenario.tune.title":        "Feed tuning",
+      "scenario.tune.blurb":        "D2 · 在已经 personalised 的 feed 上做对话式调教。Agent 确认 + 解释 + 写进长期画像。点 Why this 卡看背后逻辑。",
+      "scenario.tune.caps":         ["D2 tune", "Profile transparency", "Why this"],
+      "scenario.personalize.title": "Before / after",
+      "scenario.personalize.blurb": "D1 · 同一个推荐池，按 Agent 画像 re-rank。UI 不变 — 顺序变了。",
+      "scenario.personalize.caps":  ["D1 profile", "Same pool, different rank"],
+    },
+  };
+
+  let currentLang = (() => {
+    try { return localStorage.getItem("alteru-demo-lang") || "en"; }
+    catch (e) { return "en"; }
+  })();
+
+  function t(key) {
+    return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key;
+  }
+
+  function applyLang(mode) {
+    currentLang = mode;
+    try { localStorage.setItem("alteru-demo-lang", mode); } catch (e) {}
+    document.documentElement.lang = mode === "en" ? "en" : "zh";
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const val = t(el.getAttribute("data-i18n"));
+      if (el.hasAttribute("data-i18n-html")) el.innerHTML = val;
+      else el.textContent = val;
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+      el.placeholder = t(el.getAttribute("data-i18n-placeholder"));
+    });
+    document.querySelectorAll(".lang-switch__chip").forEach(b => {
+      b.classList.toggle("is-active", b.dataset.lang === mode);
+    });
+    // Refresh legend + app-bar subtitle to match current scenario
+    const active = document.querySelector(".chip--scenario.is-active");
+    if (active) {
+      const key = active.dataset.scenario;
+      const title = t(`scenario.${key}.title`);
+      subEl.textContent = title;
+      legendTitle.textContent = title;
+      legendBody.textContent = t(`scenario.${key}.blurb`);
+      legendCaps.innerHTML = "";
+      const caps = t(`scenario.${key}.caps`);
+      if (Array.isArray(caps)) caps.forEach(c => legendCaps.appendChild(el("li", { "data-cap": c }, [c])));
+    }
+    // Refresh tour label for upcoming
+    if (typeof updateTourLabel === "function") updateTourLabel();
+  }
+
+  // =========================================================================
   // Scenario runner (chip-driven canonical replay)
   // =========================================================================
 
@@ -434,11 +574,14 @@
     awaitingCreateTopic = false;
 
     const scenario = SCENARIOS[key];
-    subEl.textContent = scenario.title;
-    legendTitle.textContent = scenario.title;
-    legendBody.textContent = scenario.blurb;
+    const title = t(`scenario.${key}.title`) || scenario.title;
+    const blurb = t(`scenario.${key}.blurb`) || scenario.blurb;
+    const caps  = t(`scenario.${key}.caps`)  || scenario.caps;
+    subEl.textContent = title;
+    legendTitle.textContent = title;
+    legendBody.textContent = blurb;
     legendCaps.innerHTML = "";
-    scenario.caps.forEach(c => legendCaps.appendChild(el("li", { "data-cap": c }, [c])));
+    (Array.isArray(caps) ? caps : []).forEach(c => legendCaps.appendChild(el("li", { "data-cap": c }, [c])));
     if (typeof updateTourLabel === "function") updateTourLabel();
 
     for (const step of scenario.steps) {
@@ -884,13 +1027,6 @@
   // =========================================================================
 
   const SCENARIO_ORDER = ["welcome", "create", "insight", "tune", "personalize"];
-  const SCENARIO_TITLES = {
-    welcome:     "Cold start",
-    create:      "Creation hub",
-    insight:     "Data lens",
-    tune:        "Feed tuning",
-    personalize: "Before / after",
-  };
   const tourBackBtn = $("#tourBack");
   const tourNextBtn = $("#tourNext");
   const tourUpcoming = $("#tourUpcoming");
@@ -903,7 +1039,7 @@
     const cur = currentScenarioKey();
     const idx = SCENARIO_ORDER.indexOf(cur);
     const nextKey = SCENARIO_ORDER[(idx + 1) % SCENARIO_ORDER.length];
-    tourUpcoming.textContent = SCENARIO_TITLES[nextKey];
+    tourUpcoming.textContent = t(`scenario.${nextKey}.title`);
   }
   function tourStep(direction) {
     const cur = currentScenarioKey();
@@ -938,6 +1074,15 @@
     if (active) runScenario(active.dataset.scenario);
   });
 
+  // Wire language switch
+  document.querySelectorAll(".lang-switch__chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const mode = btn.dataset.lang;
+      if (mode && I18N[mode]) applyLang(mode);
+    });
+  });
+
   // Boot
+  applyLang(currentLang);
   runScenario("welcome");
 })();

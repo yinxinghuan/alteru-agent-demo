@@ -18,19 +18,23 @@
       <span>AlterU</span>
     </a>
     <div class="page-header__meta">
-      <span class="page-header__tag">Agent · v2.2 demo</span>
+      <div class="lang-switch" role="radiogroup" aria-label="Language">
+        <button type="button" class="lang-switch__chip is-active" data-lang="en">EN</button>
+        <button type="button" class="lang-switch__chip" data-lang="zh">中</button>
+        <button type="button" class="lang-switch__chip" data-lang="mix">中/EN</button>
+      </div>
     </div>
   </header>
 
   <main class="stage">
     <section class="callout" aria-label="About this demo">
-      <h1>AlterU Agent</h1>
-      <p>
+      <h1 data-i18n="callout.heading">AlterU Agent</h1>
+      <p data-i18n="callout.p1" data-i18n-html>
         A working sketch of the in-app conversational Agent
         described in <code>v2.2</code>: a creation hub, a data lens,
         a feed-personalisation engine and a connection scout.
       </p>
-      <p>
+      <p data-i18n="callout.p2" data-i18n-html>
         <strong>It's interactive.</strong> Type in the composer, tap
         suggestion chips, tap task CTAs (Preview / Publish / Retry / Delete),
         tap feed cards. Or pick a chip up top to replay a scripted scenario.
@@ -63,11 +67,11 @@
         </div>
 
         <div class="scenarios" role="tablist" aria-label="Demo scenarios">
-          <button class="chip chip--scenario is-active" role="tab" data-scenario="welcome">Welcome</button>
-          <button class="chip chip--scenario" role="tab" data-scenario="create">Create</button>
-          <button class="chip chip--scenario" role="tab" data-scenario="insight">Insight</button>
-          <button class="chip chip--scenario" role="tab" data-scenario="tune">Tune</button>
-          <button class="chip chip--scenario" role="tab" data-scenario="personalize">Compare</button>
+          <button class="chip chip--scenario is-active" role="tab" data-scenario="welcome" data-i18n="chip.welcome">Welcome</button>
+          <button class="chip chip--scenario" role="tab" data-scenario="create" data-i18n="chip.create">Create</button>
+          <button class="chip chip--scenario" role="tab" data-scenario="insight" data-i18n="chip.insight">Insight</button>
+          <button class="chip chip--scenario" role="tab" data-scenario="tune" data-i18n="chip.tune">Tune</button>
+          <button class="chip chip--scenario" role="tab" data-scenario="personalize" data-i18n="chip.compare">Compare</button>
         </div>
 
         <div class="chat" id="chat" aria-live="polite" aria-label="Conversation">
@@ -81,6 +85,7 @@
             type="text"
             autocomplete="off"
             spellcheck="false"
+            data-i18n-placeholder="composer.placeholder"
             placeholder="Say anything — try &ldquo;make a piece about rain&rdquo;"
           />
           <button id="composerSend" class="composer__send" aria-label="Send" disabled>
@@ -166,7 +171,7 @@
 
     <aside class="legend" aria-label="What this scenario shows">
       <div class="legend__row">
-        <span class="legend__label">Scenario</span>
+        <span class="legend__label" data-i18n="legend.label">Scenario</span>
         <strong id="legendTitle">Cold start</strong>
       </div>
       <p id="legendBody">
@@ -185,7 +190,7 @@
     </button>
     <button id="tourNext" class="tour-control__main" type="button">
       <span class="tour-control__col">
-        <span class="tour-control__label">Next chapter</span>
+        <span class="tour-control__label" data-i18n="tour.label">Next chapter</span>
         <span class="tour-control__upcoming" id="tourUpcoming">Creation hub</span>
       </span>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -194,8 +199,8 @@
 
   <footer class="page-footer">
     <span>
-      Demo · v2.2 design ·
-      <a href="https://github.com/yinxinghuan/alteru-agent-demo" rel="noopener">source</a>
+      <span data-i18n="footer.demo">Demo · v2.2 design</span> ·
+      <a href="https://github.com/yinxinghuan/alteru-agent-demo" rel="noopener" data-i18n="footer.link">source</a>
     </span>
     <span class="page-footer__brand">
       <img src="assets/emblem.svg" alt="" />

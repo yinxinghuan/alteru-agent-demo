@@ -95,6 +95,34 @@ code {
   text-transform: uppercase;
 }
 
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+}
+.lang-switch__chip {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--text-tertiary);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.lang-switch__chip:hover { color: var(--text-primary); }
+.lang-switch__chip.is-active {
+  background: var(--pink-bg);
+  color: var(--pink);
+}
+
 .page-footer {
   margin-top: 48px;
   padding-bottom: 36px;
@@ -1102,9 +1130,12 @@ code {
 }
 .feed-view__cover {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  /* Scale up to push the white border + rounded corners baked into the
+   * generated cover off the panel's overflow boundary. ~10% in every
+   * direction is enough to cover the white frame at all viewports. */
+  inset: -10%;
+  width: 120%;
+  height: 120%;
   object-fit: cover;
   display: block;
 }
@@ -1229,7 +1260,8 @@ code {
 .feed-view__next:hover { background: var(--pink-strong); }
 .feed-view__next img {
   display: block;
-  transform: rotate(0deg);  /* Figma rotates 90° but PNG already points down */
+  transform: rotate(90deg);  /* SVG arrow points right; rotate to down per Figma */
+  margin-top: 1px;
 }
 
 /* === Works mini overlay (embedded after Publish) =============== */
