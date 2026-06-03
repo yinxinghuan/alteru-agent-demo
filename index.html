@@ -29,7 +29,11 @@
         A working sketch of the in-app conversational Agent
         described in <code>v2.2</code>: a creation hub, a data lens,
         a feed-personalisation engine and a connection scout.
-        Pick a scenario below — the chat replays one capability domain at a time.
+      </p>
+      <p>
+        <strong>It's interactive.</strong> Type in the composer, tap
+        suggestion chips, tap task CTAs (Preview / Publish / Retry / Delete),
+        tap feed cards. Or pick a chip up top to replay a scripted scenario.
       </p>
     </section>
 
@@ -71,17 +75,104 @@
         </div>
 
         <div class="composer">
-          <div class="composer__input" aria-disabled="true">
-            <span id="composerHint">Tap a scenario above to begin</span>
-          </div>
-          <button class="composer__send" aria-label="Send" disabled>
+          <input
+            id="composerInput"
+            class="composer__input"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Say anything — try &ldquo;make a piece about rain&rdquo;"
+          />
+          <button id="composerSend" class="composer__send" aria-label="Send" disabled>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           </button>
         </div>
 
         <div class="phone__home" aria-hidden="true"></div>
+
+        <div id="lightbox" class="lightbox" aria-hidden="true">
+          <button id="lightboxClose" class="lightbox__close" aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <img id="lightboxImg" class="lightbox__img" src="" alt="" />
+          <div id="lightboxCap" class="lightbox__cap"></div>
+        </div>
+
+        <!-- Faux Home feed view — mirrors AlterU Figma Home / default (node 1:4682) -->
+        <div id="feedView" class="feed-view" aria-hidden="true">
+          <div class="feed-view__toolbar">
+            <button id="feedBack" class="feed-view__brand" type="button" aria-label="Open Agent">
+              <img src="assets/brand-feed.png" alt="AlterU" />
+              <span class="feed-view__brand-hint">tap for Agent</span>
+            </button>
+            <div class="feed-view__icons">
+              <button class="feed-view__icon" aria-label="Search">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </button>
+              <button class="feed-view__icon feed-view__icon--bell" aria-label="Notifications">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <em>3</em>
+              </button>
+              <span class="feed-view__avatar feed-view__avatar--toolbar" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <div class="feed-view__canvas">
+            <div class="feed-view__panel">
+              <img id="feedCover" class="feed-view__cover" src="" alt="" />
+              <div class="feed-view__panel-scrim" aria-hidden="true"></div>
+              <div class="feed-view__title">
+                <h2 id="feedTitle">Late-Night Decision</h2>
+                <p id="feedAuthor">by you · 6m</p>
+              </div>
+              <button id="feedWhy" class="feed-view__why" type="button">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Why this?
+              </button>
+            </div>
+
+            <div class="feed-view__dock">
+              <div class="feed-view__dock-side">
+                <span class="feed-view__stat">
+                  <img src="assets/feed-icons/icon_comment.svg" alt="" width="16" height="16" /> 12
+                </span>
+                <span class="feed-view__stat">
+                  <img src="assets/feed-icons/icon_like.svg" alt="" width="16" height="16" /> 1.1K
+                </span>
+                <span class="feed-view__stat">
+                  <img src="assets/feed-icons/icon_share.svg" alt="" width="16" height="16" /> 58
+                </span>
+              </div>
+              <button class="feed-view__next" id="feedNext" type="button">
+                <span>next</span>
+                <img src="assets/feed-icons/icon_next_arrow.svg" alt="" width="11" height="13" />
+              </button>
+              <div class="feed-view__dock-side feed-view__dock-side--right">
+                <span class="feed-view__stat">
+                  <img src="assets/feed-icons/icon_game.svg" alt="" width="16" height="16" /> 6
+                </span>
+                <span class="feed-view__stat feed-view__stat--cyan">
+                  <img src="assets/feed-icons/icon_remix.svg" alt="" width="16" height="16" /> 5
+                </span>
+                <span class="feed-view__avatar feed-view__avatar--dock" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
       <img class="phone__watermark" src="assets/watermark.svg" alt="" aria-hidden="true" />
+    </div>
+
+    <div class="tour-control" aria-label="Demo tour">
+      <button id="tourBack" class="tour-control__nav" type="button" aria-label="Previous chapter">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button id="tourNext" class="tour-control__main" type="button">
+        <span class="tour-control__label">Next chapter</span>
+        <span class="tour-control__upcoming" id="tourUpcoming">Creation hub</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
 
     <aside class="legend" aria-label="What this scenario shows">
