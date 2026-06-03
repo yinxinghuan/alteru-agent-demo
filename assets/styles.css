@@ -321,7 +321,7 @@ code {
 .app-bar__brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 .app-bar__brand img {
   width: 38px;
@@ -454,9 +454,9 @@ code {
 .msg--system { justify-content: center; }
 
 .msg__avatar {
-  flex: 0 0 24px;
-  width: 24px;
-  height: 24px;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
   border-radius: 999px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
@@ -464,7 +464,7 @@ code {
   align-items: center;
   justify-content: center;
 }
-.msg__avatar img { width: 14px; height: 14px; }
+.msg__avatar img { width: 20px; height: 20px; }
 
 .msg__bubble {
   max-width: 82%;
