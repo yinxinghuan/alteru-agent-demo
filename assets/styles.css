@@ -1303,12 +1303,12 @@ code {
 /* === Tour control (external Next chapter button) =============== */
 
 .tour-control {
+  width: fit-content;
+  max-width: calc(100% - 64px);
   margin: 28px auto 0;
-  max-width: 460px;
   display: flex;
   align-items: stretch;
   gap: 8px;
-  padding: 0 32px;
 }
 .tour-control__nav {
   flex: 0 0 44px;
@@ -1329,20 +1329,16 @@ code {
   border-color: var(--border-default);
 }
 .tour-control__main {
-  flex: 1 1 auto;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
+  gap: 14px;
+  padding: 10px 18px;
   background: linear-gradient(135deg, rgba(245,177,199,0.16), rgba(119,0,161,0.22));
   border: 1px solid rgba(245,177,199,0.32);
   border-radius: 14px;
   color: var(--text-primary);
   font-family: var(--font-display);
   cursor: pointer;
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.02em;
   text-align: left;
   transition: background .15s, border-color .15s, transform .15s;
 }
@@ -1352,22 +1348,26 @@ code {
   transform: translateY(-1px);
 }
 .tour-control__main:active { transform: scale(0.99); }
+.tour-control__col {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 140px;
+}
 .tour-control__label {
   color: var(--text-tertiary);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
+  font-size: 10px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 600;
-  display: block;
   line-height: 1;
 }
 .tour-control__upcoming {
-  flex: 1;
   color: var(--pink);
   font-weight: 700;
   font-size: 15px;
   letter-spacing: -0.01em;
-  margin-left: 4px;
+  line-height: 1;
 }
 .tour-control__main svg { color: var(--pink); flex-shrink: 0; }
 
