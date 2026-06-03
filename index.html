@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>AlterU Agent — Demo</title>
+  <meta name="description" content="Interactive demo of the AlterU Agent (v2.2 design)." />
+  <link rel="icon" type="image/svg+xml" href="assets/emblem.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="page-header">
+    <a class="page-header__brand" href="#" aria-label="AlterU">
+      <img src="assets/emblem.svg" alt="" />
+      <span>AlterU</span>
+    </a>
+    <div class="page-header__meta">
+      <span class="page-header__tag">Agent · v2.2 demo</span>
+    </div>
+  </header>
+
+  <main class="stage">
+    <section class="callout" aria-label="About this demo">
+      <h1>AlterU Agent</h1>
+      <p>
+        A working sketch of the in-app conversational Agent
+        described in <code>v2.2</code>: a creation hub, a data lens,
+        a feed-personalisation engine and a connection scout.
+        Pick a scenario below — the chat replays one capability domain at a time.
+      </p>
+    </section>
+
+    <div class="phone" role="region" aria-label="Phone preview">
+      <div class="phone__notch" aria-hidden="true"></div>
+      <div class="phone__screen">
+        <div class="status-bar" aria-hidden="true">
+          <span class="status-bar__time">3:14</span>
+          <span class="status-bar__icons">
+            <svg width="18" height="11" viewBox="0 0 18 11" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="6" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="7" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="9" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="11" rx="1" fill="currentColor"/></svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" fill="currentColor"/><path d="M3 5.5C4.3 4.2 6 3.5 8 3.5s3.7.7 5 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M0 2.5C2.1 1 5 0 8 0s5.9 1 8 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="currentColor"/><rect x="2" y="2" width="17" height="8" rx="1" fill="currentColor"/><rect x="24" y="4" width="1.5" height="4" rx="0.5" fill="currentColor"/></svg>
+          </span>
+        </div>
+
+        <div class="app-bar">
+          <div class="app-bar__brand">
+            <img src="assets/emblem.svg" alt="AlterU" width="26" height="26" />
+            <div>
+              <div class="app-bar__title">Agent</div>
+              <div class="app-bar__sub" id="appBarSub">Pick a scenario to begin</div>
+            </div>
+          </div>
+          <button class="app-bar__action" id="restartBtn" aria-label="Restart">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10a7 7 0 1 1 2 4.9"/><path d="M3 4v5h5"/></svg>
+          </button>
+        </div>
+
+        <div class="scenarios" role="tablist" aria-label="Demo scenarios">
+          <button class="chip chip--scenario is-active" role="tab" data-scenario="welcome">Welcome</button>
+          <button class="chip chip--scenario" role="tab" data-scenario="create">Create</button>
+          <button class="chip chip--scenario" role="tab" data-scenario="insight">Insight</button>
+          <button class="chip chip--scenario" role="tab" data-scenario="tune">Tune</button>
+          <button class="chip chip--scenario" role="tab" data-scenario="personalize">Compare</button>
+        </div>
+
+        <div class="chat" id="chat" aria-live="polite" aria-label="Conversation">
+          <!-- messages injected here -->
+        </div>
+
+        <div class="composer">
+          <div class="composer__input" aria-disabled="true">
+            <span id="composerHint">Tap a scenario above to begin</span>
+          </div>
+          <button class="composer__send" aria-label="Send" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+
+        <div class="phone__home" aria-hidden="true"></div>
+      </div>
+      <img class="phone__watermark" src="assets/watermark.svg" alt="" aria-hidden="true" />
+    </div>
+
+    <aside class="legend" aria-label="What this scenario shows">
+      <div class="legend__row">
+        <span class="legend__label">Scenario</span>
+        <strong id="legendTitle">Cold start</strong>
+      </div>
+      <p id="legendBody">
+        The Agent opens with a welcome and three suggestion chips —
+        no forced configuration, no profile setup wizard.
+      </p>
+      <ul class="legend__caps" id="legendCaps">
+        <li data-cap="cold">Cold start</li>
+      </ul>
+    </aside>
+  </main>
+
+  <footer class="page-footer">
+    <span>
+      Demo · v2.2 design ·
+      <a href="https://github.com/yinxinghuan/alteru-agent-demo" rel="noopener">source</a>
+    </span>
+    <span class="page-footer__brand">
+      <img src="assets/emblem.svg" alt="" />
+      <span>AlterU</span>
+    </span>
+  </footer>
+
+  <script src="assets/app.js" defer></script>
+</body>
+</html>
