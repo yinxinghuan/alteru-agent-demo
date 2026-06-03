@@ -1634,7 +1634,25 @@ code {
   font-weight: 600;
 }
 .profile-view__pill--filled:hover { background: var(--pink-strong); border-color: var(--pink-strong); }
+.profile-view__pill--follow {
+  background: #fff;
+  border: 1px solid #fff;
+  color: #000;
+  font-weight: 600;
+  width: 100%;
+}
+.profile-view__pill--follow.is-following {
+  background: transparent;
+  border-color: var(--border-subtle);
+  color: var(--pink);
+}
 .profile-view__pill:active { transform: scale(0.98); }
+
+/* Self vs visitor — show only the appropriate action set */
+.profile-view__actions--visitor { display: none; }
+.profile-view.is-visitor .profile-view__actions--self { display: none; }
+.profile-view.is-visitor .profile-view__actions--visitor { display: flex; }
+.profile-view.is-visitor .profile-view__edit { display: none; }
 
 /* Avatar — 75×75 round, positioned top-right */
 .profile-view__avatar {
@@ -1835,6 +1853,75 @@ code {
   background: var(--bg-card);
 }
 .work-card__action--edit:hover { background: #242424; }
+
+/* === Connection card (C capability — recommend similar user) === */
+
+.conn-card {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(245,177,199,0.12), rgba(119,0,161,0.16));
+  border: 1px solid rgba(245,177,199,0.32);
+  border-radius: 14px;
+}
+.conn-card__head {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pink);
+}
+.conn-card__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.conn-card__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+}
+.conn-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.conn-card__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+.conn-card__followers {
+  font-family: var(--font-text);
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.conn-card__reason {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+.conn-card__cta {
+  display: flex;
+  gap: 8px;
+}
+.conn-card__cta .btn { flex: 1 1 auto; }
 
 /* === Works mini overlay (embedded after Publish) =============== */
 

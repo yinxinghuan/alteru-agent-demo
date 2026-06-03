@@ -100,7 +100,7 @@
     tune: {
       title: "Feed tuning",
       blurb: "D2 · conversational adjustments to a feed that's already personalised. Agent acknowledges, explains, and writes the change into the long-term profile. Tap the Why-this card to dig into it.",
-      caps: ["D2 tune", "Profile transparency", "Why this"],
+      caps: ["D2 tune", "Profile transparency", "Why this", "C connection"],
       steps: [
         { type: "wait", ms: 400 },
         { type: "agent", text: "Tell me what you want more or less of." },
@@ -111,6 +111,9 @@
         { type: "suggestions", items: ["Undo", "Show my profile"] },
         { type: "wait", ms: 1100 },
         { type: "why-card", text: "<strong>Why this?</strong> — tap any feed card to ask in context." },
+        { type: "wait", ms: 1200 },
+        { type: "agent", text: "While I'm in the profile, I noticed someone who overlaps strongly with you." },
+        { type: "connection", person: "ren" },
       ],
     },
 
@@ -421,6 +424,53 @@
     return row;
   }
 
+  // Connection card (C capability domain — recommend a similar user)
+  function renderConnectionCard(spec) {
+    const p = PEOPLE[spec.person];
+    if (!p) return;
+    const avatar = el("div", { class: "conn-card__avatar" }, [p.name.charAt(0).toUpperCase()]);
+    let h = 0;
+    for (let i = 0; i < p.name.length; i++) h = (h * 31 + p.name.charCodeAt(i)) | 0;
+    avatar.style.background = `radial-gradient(circle at 30% 30%, hsl(${Math.abs(h)%360},65%,62%), hsl(${Math.abs(h)%360},55%,40%) 75%)`;
+
+    const reason = currentLang === "zh"
+      ? `你和 <strong>${p.name}</strong> 都在做 moody 叙事 · 3 处主题重叠`
+      : `You and <strong>${p.name}</strong> both make moody narrative · 3 theme overlaps`;
+
+    const cta = el("div", { class: "conn-card__cta" }, [
+      (() => {
+        const b = el("button", { class: "btn btn--primary", type: "button" }, [tx("Show profile")]);
+        b.addEventListener("click", () => openVisitorProfile(spec.person));
+        return b;
+      })(),
+      (() => {
+        const b = el("button", { class: "btn", type: "button" }, [tx("Skip")]);
+        b.addEventListener("click", () => runMini([{ type: "agent", text: tx("OK, skipped. I'll keep an eye out.") }]));
+        return b;
+      })(),
+    ]);
+
+    const card = el("div", { class: "conn-card" }, [
+      el("div", { class: "conn-card__head" }, [tx("CONNECTION SCOUT")]),
+      el("div", { class: "conn-card__row" }, [
+        avatar,
+        el("div", { class: "conn-card__meta" }, [
+          el("div", { class: "conn-card__name" }, [p.name]),
+          el("div", { class: "conn-card__followers" }, [`${p.followers} ${tx("k followers")}`]),
+        ]),
+      ]),
+      el("p", { class: "conn-card__reason", html: reason }),
+      cta,
+    ]);
+
+    const row = el("div", { class: "msg msg--agent" }, [
+      avatarNode(),
+      el("div", { class: "msg__bubble" }, [card]),
+    ]);
+    chat.appendChild(row);
+    return row;
+  }
+
   // =========================================================================
   // i18n — page chrome only.  The phone-side chat content (Agent and user
   // messages, task labels, feed content) stays English: that IS the demo
@@ -630,6 +680,14 @@
     // Misc
     "Published · 2s ago":           "已发布 · 2s 前",
     "Retry worked. Cover is in.":   "重试成功。封面好了。",
+    "While I'm in the profile, I noticed someone who overlaps strongly with you.":
+      "顺便说，画像里发现一个跟你高度重合的人。",
+    "CONNECTION SCOUT":             "连接推荐",
+    "Show profile":                 "看主页",
+    "Skip":                         "跳过",
+    "OK, skipped. I'll keep an eye out.": "好的，先跳过。我会继续留意。",
+    "Follow":                       "关注",
+    "Following":                    "已关注",
 
     // Templates with __VAR__ placeholders for respondTo / handleTaskCta
     "Good prompt. Spinning up <strong>__TITLE__</strong>. Cover generating.":
@@ -797,6 +855,7 @@
       case "insight":      renderInsight(step);         scrollChatToBottom(); return;
       case "feed":         renderFeed(step);            scrollChatToBottom(); return;
       case "why-card":     renderWhyCard(step.text);    scrollChatToBottom(); return;
+      case "connection":   renderConnectionCard(step);  scrollChatToBottom(); return;
     }
   }
 
@@ -1313,14 +1372,21 @@
     PROFILE_WORKS.forEach(w => profileCards.appendChild(workCard(w)));
   }
 
+  let currentVisitor = null;
+
   function applyProfileLang() {
+    const isVisitor = profileView.classList.contains("is-visitor");
     profileView.querySelectorAll("[data-i18n-phone]").forEach(el => {
       const key = el.getAttribute("data-i18n-phone");
+      // In visitor mode the bio is set from the visitor's data, not the map
+      if (isVisitor && key === "profile.bio") return;
       const map = {
         "profile.bio":        { en: "Ava is an outgoing and creative individual with a passion for music.", zh: "Ava 是个外向、有创造力、热爱音乐的人。" },
         "profile.followers":  { en: "k followers", zh: "k 关注者" },
         "profile.setavatar":  { en: "Set Avatar", zh: "设置头像" },
         "profile.create":     { en: "Create Game", zh: "做个游戏" },
+        "profile.follow":     { en: "Follow", zh: "关注" },
+        "profile.following":  { en: "Following", zh: "已关注" },
         "profile.tab.like":   { en: "Like", zh: "喜欢" },
         "profile.tab.create": { en: "Create", zh: "创作" },
       };
@@ -1329,8 +1395,115 @@
     });
     const hint = profileView.querySelector(".profile-view__back-hint");
     if (hint) hint.textContent = tx("back to Agent");
-    renderProfileCards();
+
+    if (isVisitor && currentVisitor) {
+      // Re-apply visitor bio in case lang changed
+      const bioEl = profileView.querySelector(".profile-view__bio");
+      if (bioEl) bioEl.textContent = currentLang === "zh" ? (currentVisitor.bioZh || currentVisitor.bio) : currentVisitor.bio;
+      // Re-apply followers strip with right unit
+      const stats = profileView.querySelector(".profile-view__stats");
+      if (stats) stats.innerHTML = `<span><strong>${currentVisitor.followers}</strong> <span>${tx("k followers")}</span></span>`;
+      renderProfileCardsFor(currentVisitor.works);
+    } else {
+      renderProfileCards();
+    }
   }
+
+  // === Visitor profile (C connection — bridge to someone else) ===========
+
+  // Hardcoded "others" we may visit. Their works mirror the FEED_POOL
+  // attribution so the demo stays coherent (Ren made Coffee in Rain, etc.).
+  const PEOPLE = {
+    ren: {
+      name: "Ren",
+      bio: "I make late-night ambient pieces. Coffee, rain, last trains.",
+      bioZh: "做夜深里的氛围片。咖啡、雨、末班车。",
+      followers: "41.2",
+      works: [
+        { cover: "cafe_window",   title: "Coffee in Rain",  plays: "8,201 Played", status: "published", ctas: ["play"], cost: "0" },
+        { cover: "rainy_konbini", title: "Konbini at 2 AM", plays: "4,033 Played", status: "published", ctas: ["play"], cost: "0" },
+        { cover: "last_subway",   title: "Last Train Home", plays: "12,540 Played", status: "published", ctas: ["play"], cost: "0" },
+      ],
+    },
+  };
+
+  function renderProfileCardsFor(works) {
+    profileCards.innerHTML = "";
+    works.forEach(w => profileCards.appendChild(workCard(w)));
+  }
+
+  function openVisitorProfile(personKey) {
+    const p = PEOPLE[personKey];
+    if (!p) return;
+    currentVisitor = p;
+    profileView.classList.add("is-visitor");
+    // Swap name + bio + avatar
+    const nameEl = profileView.querySelector(".profile-view__name");
+    if (nameEl) nameEl.textContent = p.name;
+    const bioEl = profileView.querySelector(".profile-view__bio");
+    if (bioEl) bioEl.textContent = currentLang === "zh" ? (p.bioZh || p.bio) : p.bio;
+    const stats = profileView.querySelector(".profile-view__stats");
+    if (stats) stats.innerHTML = `<span><strong>${p.followers}</strong> <span>${tx("k followers")}</span></span>`;
+    // Avatar: use initials avatar in HSL hashed colour
+    const avatar = profileView.querySelector(".profile-view__avatar");
+    if (avatar) {
+      avatar.style.backgroundImage = "none";
+      avatar.style.backgroundColor = "";
+      // Inject initial inside the avatar
+      avatar.innerHTML = "";
+      let h = 0;
+      for (let i = 0; i < p.name.length; i++) h = (h * 31 + p.name.charCodeAt(i)) | 0;
+      const hue = Math.abs(h) % 360;
+      avatar.style.background = `radial-gradient(circle at 30% 30%, hsl(${hue},65%,62%), hsl(${hue},55%,40%) 75%)`;
+      avatar.style.display = "flex";
+      avatar.style.alignItems = "center";
+      avatar.style.justifyContent = "center";
+      avatar.style.fontFamily = "var(--font-display)";
+      avatar.style.fontWeight = "700";
+      avatar.style.fontSize = "32px";
+      avatar.style.color = "#fff";
+      avatar.style.textShadow = "0 2px 6px rgba(0,0,0,0.35)";
+      avatar.textContent = p.name.charAt(0).toUpperCase();
+    }
+    // Switch tab default: Like is active in visitor mode
+    profileView.querySelectorAll(".profile-view__tab").forEach((t, i) => {
+      t.classList.toggle("is-active", i === 0);  // Like = first
+    });
+    // Render Ren's works
+    renderProfileCardsFor(p.works);
+    // Reset follow button state
+    const follow = document.getElementById("profileFollow");
+    if (follow) {
+      follow.classList.remove("is-following");
+      follow.textContent = tx("Follow");
+    }
+    applyProfileLang();
+    profileView.classList.add("is-open");
+    profileView.setAttribute("aria-hidden", "false");
+  }
+
+  // Restore profile to self mode when leaving
+  function resetProfileToSelf() {
+    currentVisitor = null;
+    profileView.classList.remove("is-visitor");
+    const nameEl = profileView.querySelector(".profile-view__name");
+    if (nameEl) nameEl.textContent = "Yin";
+    const avatar = profileView.querySelector(".profile-view__avatar");
+    if (avatar) {
+      avatar.removeAttribute("style");
+      avatar.textContent = "";
+    }
+    profileView.querySelectorAll(".profile-view__tab").forEach((t, i) => {
+      t.classList.toggle("is-active", i === 1);  // Create active for self
+    });
+  }
+
+  // Wire Follow button toggle
+  document.getElementById("profileFollow").addEventListener("click", (e) => {
+    const btn = e.currentTarget;
+    btn.classList.toggle("is-following");
+    btn.textContent = btn.classList.contains("is-following") ? tx("Following") : tx("Follow");
+  });
 
   function openProfileView() {
     applyProfileLang();
@@ -1340,6 +1513,9 @@
   function closeProfileView() {
     profileView.classList.remove("is-open");
     profileView.setAttribute("aria-hidden", "true");
+    // Once the transition ends, reset to self mode so the next openProfileView
+    // (whether self or visitor) starts from a clean baseline
+    setTimeout(resetProfileToSelf, 300);
   }
   profileBackBtn.addEventListener("click", closeProfileView);
   profileCreateBtn.addEventListener("click", () => {
