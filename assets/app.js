@@ -1259,11 +1259,17 @@
     if (active) runScenario(active.dataset.scenario);
   });
 
-  // Wire language switch
+  // Wire language switch — also re-run the current scenario so the
+  // phone-side chat (which has already rendered its text) refreshes
+  // in the new language.
   document.querySelectorAll(".lang-switch__chip").forEach(btn => {
     btn.addEventListener("click", () => {
       const mode = btn.dataset.lang;
-      if (mode && I18N[mode]) applyLang(mode);
+      if (!mode || !I18N[mode]) return;
+      if (mode === currentLang) return;
+      applyLang(mode);
+      const active = document.querySelector(".chip--scenario.is-active");
+      if (active) runScenario(active.dataset.scenario);
     });
   });
 
