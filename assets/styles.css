@@ -1923,6 +1923,77 @@ code {
 }
 .conn-card__cta .btn { flex: 1 1 auto; }
 
+/* === Works view (faux AlterU Works tab — Figma 1:6501) ========= */
+
+.works-view {
+  position: absolute;
+  inset: 44px 0 0 0;
+  background: var(--feed-surface-primary);
+  overflow: hidden;
+  z-index: 22;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--d-base) var(--ease-out);
+  display: flex;
+  flex-direction: column;
+}
+.works-view.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.works-view__toolbar {
+  flex: 0 0 auto;
+  padding: 14px 20px 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.works-view__icon-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--d-fast);
+}
+.works-view__icon-btn:hover { background: rgba(255,255,255,0.08); }
+.works-view__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  flex: 1 1 auto;
+}
+.works-view__count {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum";
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--pink);
+  background: var(--pink-bg);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+.works-view__cards {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 10px 10px 38px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.works-view__cards::-webkit-scrollbar { width: 4px; }
+.works-view__cards::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 4px; }
+
 /* === Works mini overlay (embedded after Publish) =============== */
 
 .works-card {

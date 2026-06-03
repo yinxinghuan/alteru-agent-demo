@@ -238,6 +238,8 @@
     "Less from this author":   () => runMini([{ type: "agent", text: "Noted. Author weight dropped — you'll see them less for the next 7 days." }]),
     "Same vibe, more please":  () => runMini([{ type: "agent", text: "Locked in. I'll bias your feed toward this mood for the next session." }]),
     "Show my profile":         () => openProfileView(),
+    "Show my works":           () => openWorksView(),
+    "Open Works":              () => openWorksView(),
     "Undo":                    () => runMini([{ type: "agent", text: "Undone. Profile is back to where it was." }]),
     "Not yet":                 () => runMini([{ type: "agent", text: "OK, I'll hold off." }]),
     "Make a piece about a rainy alley at 2 AM": null,
@@ -688,6 +690,9 @@
     "OK, skipped. I'll keep an eye out.": "好的，先跳过。我会继续留意。",
     "Follow":                       "关注",
     "Following":                    "已关注",
+    "Show my works":                "看我的作品",
+    "Open Works":                   "打开 Works",
+    "Opening your Works.":          "打开 Works。",
 
     // Templates with __VAR__ placeholders for respondTo / handleTaskCta
     "Good prompt. Spinning up <strong>__TITLE__</strong>. Cover generating.":
@@ -806,6 +811,7 @@
     chat.innerHTML = "";
     closeLightbox();
     closeFeedView();
+    if (typeof closeWorksView === "function") closeWorksView();
     awaitingCreateTopic = false;
 
     const scenario = SCENARIOS[key];
@@ -868,10 +874,12 @@
     insight: /\b(how|stats|data|perform|reading|doing|yesterday|chart|number|表现|昨天|数据)\b/i,
     tune:    /\b(less|more|horror|noisy|tune|adjust|feed|recommend|权重|少看|多看)\b/i,
     why:     /\b(why|为什么|怎么)\b/i,
+    works:   /\b(works|gallery|my\s+pieces|作品|作品库)\b/i,
   };
 
   function classify(text) {
     const t = text.toLowerCase();
+    if (RX.works.test(t))   return "works";
     if (RX.create.test(t))  return "create";
     if (RX.insight.test(t)) return "insight";
     if (RX.tune.test(t))    return "tune";
@@ -995,6 +1003,13 @@
       ]);
       return;
     }
+    if (intent === "works") {
+      await runMini([
+        { type: "agent", text: "Opening your Works." },
+      ]);
+      setTimeout(openWorksView, 300);
+      return;
+    }
     // Deflect
     await runMini([
       { type: "agent", text: "I can kick off a new piece, look at how your work is doing, or shape your feed. Want one of those — or just describe what you have in mind?" },
@@ -1090,7 +1105,7 @@
       renderWorksCard(cover || "late_night_decision", title);
       scrollChatToBottom();
       await sleep(300);
-      renderSuggestions(["Push to feed", "Draft a caption", "Not yet"]);
+      renderSuggestions(["Open Works", "Push to feed", "Draft a caption", "Not yet"]);
       scrollChatToBottom();
       return;
     }
@@ -1518,6 +1533,33 @@
     setTimeout(resetProfileToSelf, 300);
   }
   profileBackBtn.addEventListener("click", closeProfileView);
+
+  // === Works full-screen view (bridges Agent → Works module) ===========
+
+  const worksView    = document.getElementById("worksView");
+  const worksBack    = document.getElementById("worksBack");
+  const worksCount   = document.getElementById("worksCount");
+  const worksCardsEl = document.getElementById("worksCards");
+
+  function openWorksView() {
+    // Same data as Profile self mode; this is the dedicated Works tab.
+    worksCardsEl.innerHTML = "";
+    PROFILE_WORKS.forEach(w => worksCardsEl.appendChild(workCard(w)));
+    worksCount.textContent = PROFILE_WORKS.length;
+    // Translate "Works" title
+    worksView.querySelectorAll("[data-i18n-works]").forEach(el => {
+      const map = { "works.title": { en: "Works", zh: "作品" } };
+      const e = map[el.getAttribute("data-i18n-works")];
+      if (e) el.textContent = e[currentLang] || e.en;
+    });
+    worksView.classList.add("is-open");
+    worksView.setAttribute("aria-hidden", "false");
+  }
+  function closeWorksView() {
+    worksView.classList.remove("is-open");
+    worksView.setAttribute("aria-hidden", "true");
+  }
+  worksBack.addEventListener("click", closeWorksView);
   profileCreateBtn.addEventListener("click", () => {
     closeProfileView();
     setTimeout(() => {
