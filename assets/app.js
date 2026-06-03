@@ -1161,6 +1161,39 @@
   function closeFeedView() {
     feedView.classList.remove("is-open");
     feedView.setAttribute("aria-hidden", "true");
+    // Reset creator badge so the next openFeedView() starts clean
+    const cb = document.getElementById("feedCreatorBadge");
+    if (cb) cb.hidden = true;
+  }
+
+  // D1 linkage: open feed view of a work the user owns, with a creator
+  // overlay showing how it's been performing in the pooled feed signal.
+  function openFeedAsCreator(work) {
+    // Pull the score from FEED_POOL if this work is in there; else use the
+    // work's plays string with a placeholder rank.
+    const poolItem = FEED_POOL.find(it => it.cover === work.cover);
+    const plays = (work.plays || "").replace(/\sPlayed.*$/i, "") || "—";
+    const score = poolItem ? poolItem.score : "—";
+    openFeedView(work.cover, work.title, "by you");
+    const cb = document.getElementById("feedCreatorBadge");
+    const playsEl = document.getElementById("feedCbPlays");
+    const scoreEl = document.getElementById("feedCbScore");
+    if (playsEl) playsEl.textContent = plays;
+    if (scoreEl) scoreEl.textContent = score;
+    if (cb) {
+      // Translate inline labels
+      cb.querySelectorAll("[data-i18n-phone]").forEach(node => {
+        const k = node.getAttribute("data-i18n-phone");
+        const map = {
+          "feed.creator.label": { en: "CREATOR VIEW", zh: "创作者视角" },
+          "feed.creator.plays": { en: "plays",        zh: "播放" },
+          "feed.creator.score": { en: "profile rank", zh: "画像得分" },
+        };
+        const entry = map[k];
+        if (entry) node.textContent = entry[currentLang] || entry.en;
+      });
+      cb.hidden = false;
+    }
   }
   function feedAdvance() {
     feedCursor = (feedCursor + 1) % FEED_POOL.length;
@@ -1224,12 +1257,21 @@
   ];
 
   function workCard(w) {
-    const cover = el("div", { class: "work-card__cover" }, [
+    const cover = el("div", { class: "work-card__cover", "data-cover": w.cover }, [
       el("img", { src: COVERS[w.cover], alt: w.title }),
       el("div", { class: `work-card__chip work-card__chip--${w.status}` }, [
         tx(w.status === "published" ? "Published" : "Unpublished"),
       ]),
     ]);
+    // D1 linkage — tap published cover to open the feed view of this piece
+    // with a creator badge showing plays + profile rank.
+    if (w.status === "published") {
+      cover.style.cursor = "pointer";
+      cover.addEventListener("click", () => {
+        closeProfileView();
+        setTimeout(() => openFeedAsCreator(w), 280);
+      });
+    }
 
     const body = el("div", { class: "work-card__body" }, [
       el("div", { class: "work-card__top" }, [
