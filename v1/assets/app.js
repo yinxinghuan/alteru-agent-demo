@@ -437,7 +437,6 @@
       "tour.label":   "NEXT CHAPTER",
       "footer.demo":  "Demo · v2.2 design",
       "footer.link":  "source",
-      "footer.v1":    "v1 snapshot",
       "composer.placeholder": 'Say anything — try "make a piece about rain"',
       "chip.welcome":  "Welcome",
       "chip.create":   "Create",
@@ -468,7 +467,6 @@
       "tour.label":   "下一章节",
       "footer.demo":  "演示 · v2.2 设计",
       "footer.link":  "源码",
-      "footer.v1":    "v1 快照",
       "composer.placeholder": '随便说点什么——试试"做一个关于雨的作品"',
       "chip.welcome":  "欢迎",
       "chip.create":   "创作",
@@ -731,9 +729,6 @@
     }
     // Refresh tour label for upcoming
     if (typeof updateTourLabel === "function") updateTourLabel();
-    if (typeof window.__moveScenariosIndicator === "function") {
-      requestAnimationFrame(window.__moveScenariosIndicator);
-    }
   }
 
   // =========================================================================
@@ -1358,29 +1353,13 @@
   // Scenario chips
   // =========================================================================
 
-  const scenariosIndicator = document.querySelector(".scenarios__indicator");
-  function moveScenariosIndicator() {
-    if (!scenariosIndicator) return;
-    const active = document.querySelector(".chip--scenario.is-active");
-    if (!active) return;
-    const strip = active.parentElement;
-    const r = active.getBoundingClientRect();
-    const sr = strip.getBoundingClientRect();
-    const left = r.left - sr.left + strip.scrollLeft;
-    scenariosIndicator.style.left = `${left + 8}px`;
-    scenariosIndicator.style.width = `${r.width - 16}px`;
-  }
   document.querySelectorAll(".chip--scenario").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".chip--scenario").forEach(b => b.classList.remove("is-active"));
       btn.classList.add("is-active");
-      requestAnimationFrame(moveScenariosIndicator);
       runScenario(btn.dataset.scenario);
     });
   });
-  window.addEventListener("resize", moveScenariosIndicator);
-  // expose so applyLang / boot can re-call after width changes
-  window.__moveScenariosIndicator = moveScenariosIndicator;
 
   $("#restartBtn").addEventListener("click", () => {
     const active = document.querySelector(".chip--scenario.is-active");
@@ -1404,13 +1383,4 @@
   // Boot
   applyLang(currentLang);
   runScenario("welcome");
-  // After layout settles + fonts load, anchor the sliding indicator
-  requestAnimationFrame(() => {
-    if (typeof window.__moveScenariosIndicator === "function") window.__moveScenariosIndicator();
-  });
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => {
-      if (typeof window.__moveScenariosIndicator === "function") window.__moveScenariosIndicator();
-    });
-  }
 })();
