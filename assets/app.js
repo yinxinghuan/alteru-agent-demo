@@ -392,7 +392,7 @@
           it.score ? el("em", {}, [it.score]) : null,
         ].filter(Boolean)),
       ]);
-      tile.addEventListener("click", () => openFeedView(it.cover, it.title, "by you"));
+      tile.addEventListener("click", () => openFeedView(it.cover, it.title));
       grid.appendChild(tile);
     });
     const tagClass = spec.tag === "personal" ? "feed__tag feed__tag--personal" : "feed__tag feed__tag--generic";
@@ -947,6 +947,25 @@
     return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
+  // Stable initials avatar — colour hashed from name so every reference
+  // to the same user renders the same chip. Self entries (by you / 你)
+  // are caller-handled per cross-user-avatar rule.
+  function userAvatarHtml(rawName, size) {
+    const sz = size || 18;
+    const name = String(rawName || "").replace(/^by\s+/i, "").replace(/[·\s].+$/, "").trim();
+    const initial = (name.charAt(0) || "?").toUpperCase();
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) | 0;
+    const hue = Math.abs(h) % 360;
+    const sat = 55 + (Math.abs(h >> 8) % 15);
+    const lit = 42 + (Math.abs(h >> 16) % 10);
+    return `<span class="user-avatar" style="width:${sz}px;height:${sz}px;background:hsl(${hue},${sat}%,${lit}%);font-size:${Math.round(sz*0.55)}px">${initial}</span>`;
+  }
+  function isSelfAuthor(author) {
+    const a = String(author || "").toLowerCase().trim();
+    return /^by\s+(you|你)$/.test(a) || a === "you" || a === "你";
+  }
+
   // =========================================================================
   // Composer wiring
   // =========================================================================
@@ -1134,7 +1153,7 @@
     const item = FEED_POOL[feedCursor];
     feedCover.src = COVERS[item.cover];
     feedTitle.textContent = tx(title || item.title);
-    feedAuthor.textContent = tx(author || item.author) + " · 6m";
+    writeFeedAuthor(author || item.author);
     feedView.classList.add("is-open");
     feedView.setAttribute("aria-hidden", "false");
     refreshFeedBrandHint();
@@ -1148,7 +1167,17 @@
     const item = FEED_POOL[feedCursor];
     feedCover.src = COVERS[item.cover];
     feedTitle.textContent = tx(item.title);
-    feedAuthor.textContent = tx(item.author) + " · 6m";
+    writeFeedAuthor(item.author);
+  }
+  function writeFeedAuthor(author) {
+    const label = tx(author);
+    if (isSelfAuthor(author)) {
+      feedAuthor.textContent = label + " · 6m";
+    } else {
+      // raw name (strip leading "by ")
+      const name = label.replace(/^by\s+/i, "");
+      feedAuthor.innerHTML = userAvatarHtml(name, 20) + `<span>${label} · 6m</span>`;
+    }
   }
   function refreshFeedBrandHint() {
     const hint = feedView.querySelector(".feed-view__brand-hint");
