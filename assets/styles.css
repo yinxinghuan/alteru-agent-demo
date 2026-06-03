@@ -321,7 +321,11 @@ code {
 .app-bar__brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+}
+.app-bar__brand img {
+  width: 38px;
+  height: 38px;
 }
 .app-bar__title {
   font-family: var(--font-display);
@@ -982,12 +986,11 @@ code {
   pointer-events: auto;
 }
 
-/* Toolbar: ~46px tall, px 18 — BrandLogotype enlarged from Figma 57x38 to
- * 78x52 so it reads at demo viewing distance. Icons keep 30×30 / avatar 35. */
+/* Toolbar: 38px tall, px 20 — BrandLogotype 56.667×38 left + icon strip 30/30/35 right (Figma 1:4682) */
 .feed-view__toolbar {
-  flex: 0 0 52px;
-  height: 52px;
-  padding: 0 18px;
+  flex: 0 0 38px;
+  height: 38px;
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1001,11 +1004,11 @@ code {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  height: 52px;
+  height: 38px;
 }
 .feed-view__brand img {
-  width: 78px;
-  height: 52px;
+  width: 57px;
+  height: 38px;
   object-fit: contain;
   image-rendering: -webkit-optimize-contrast;
   transition: transform .15s, filter .15s;
