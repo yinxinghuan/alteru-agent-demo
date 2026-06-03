@@ -234,9 +234,11 @@
     "Push to feed":            () => openFeedView("late_night_decision", "Late-Night Decision", "by you"),
     "Less from this author":   () => runMini([{ type: "agent", text: "Noted. Author weight dropped — you'll see them less for the next 7 days." }]),
     "Same vibe, more please":  () => runMini([{ type: "agent", text: "Locked in. I'll bias your feed toward this mood for the next session." }]),
-    "Show my profile":         () => runMini([{ type: "agent", text: "Your consumption profile, short version: <em>moody narrative</em>, <em>late-night peak (12-2am)</em>, <em>slow pacing preferred</em>, <em>horror down to 0.2</em>. Long version takes a whole screen — coming in v2." }]),
+    "Show my profile":         () => openProfileView(),
     "Undo":                    () => runMini([{ type: "agent", text: "Undone. Profile is back to where it was." }]),
     "Not yet":                 () => runMini([{ type: "agent", text: "OK, I'll hold off." }]),
+    "Make a piece about a rainy alley at 2 AM": null,
+    "Make something quiet":    null,
   };
 
   function renderSuggestions(items) {
@@ -1169,6 +1171,111 @@
           { type: "suggestions", items: ["Less from this author", "Same vibe, more please", "Show my profile"] },
         ]);
       }, 480);
+    }, 280);
+  });
+
+  // =========================================================================
+  // Profile view (faux AlterU Profile / self - create — bridges Agent → Profile)
+  // =========================================================================
+
+  const profileView      = $("#profileView");
+  const profileBackBtn   = $("#profileBack");
+  const profileCreateBtn = $("#profileCreateGame");
+  const profileCards     = $("#profileCards");
+
+  const PROFILE_WORKS = [
+    { cover: "late_night_decision", title: "Late-Night Decision", plays: "1,247 Played",  status: "published",  ctas: ["play", "delete", "edit"], cost: "99" },
+    { cover: "reading_log",         title: "Reading Log",         plays: "8,932 Played",  status: "published",  ctas: ["play", "delete", "edit"], cost: "12" },
+    { cover: "mirror_gaze",         title: "Mirror, Mirror",      plays: "0 Played",      status: "unpublished", ctas: ["delete", "edit"] },
+  ];
+
+  function workCard(w) {
+    const cover = el("div", { class: "work-card__cover" }, [
+      el("img", { src: COVERS[w.cover], alt: w.title }),
+      el("div", { class: `work-card__chip work-card__chip--${w.status}` }, [
+        tx(w.status === "published" ? "Published" : "Unpublished"),
+      ]),
+    ]);
+
+    const body = el("div", { class: "work-card__body" }, [
+      el("div", { class: "work-card__top" }, [
+        el("div", { class: "work-card__title-col" }, [
+          el("p", { class: "work-card__title" }, [tx(w.title)]),
+          el("p", { class: "work-card__plays" }, [txProfilePlays(w.plays)]),
+        ]),
+        w.status === "published"
+          ? el("button", { class: "work-card__remix", type: "button" }, [tx("Remix")])
+          : null,
+      ]),
+      el("div", { class: "work-card__cta" }, w.ctas.map(cta => {
+        if (cta === "play") {
+          return el("button", { class: "work-card__action work-card__action--play", type: "button" }, [
+            tx("Play"),
+            w.cost ? el("span", { class: "cost" }, [" " + w.cost]) : null,
+          ]);
+        }
+        if (cta === "delete") {
+          return el("button", { class: "work-card__action work-card__action--delete", type: "button" }, [tx("Delete")]);
+        }
+        if (cta === "edit") {
+          return el("button", { class: "work-card__action work-card__action--edit", type: "button" }, [tx("Edit")]);
+        }
+        return null;
+      })),
+    ]);
+
+    return el("div", { class: "work-card" }, [cover, body]);
+  }
+
+  function txProfilePlays(s) {
+    if (currentLang !== "zh") return s;
+    return s.replace(/Played/, "次玩过");
+  }
+
+  function renderProfileCards() {
+    profileCards.innerHTML = "";
+    PROFILE_WORKS.forEach(w => profileCards.appendChild(workCard(w)));
+  }
+
+  function applyProfileLang() {
+    profileView.querySelectorAll("[data-i18n-phone]").forEach(el => {
+      const key = el.getAttribute("data-i18n-phone");
+      const map = {
+        "profile.bio":        { en: "Ava is an outgoing and creative individual with a passion for music.", zh: "Ava 是个外向、有创造力、热爱音乐的人。" },
+        "profile.followers":  { en: "k followers", zh: "k 关注者" },
+        "profile.setavatar":  { en: "Set Avatar", zh: "设置头像" },
+        "profile.create":     { en: "Create Game", zh: "做个游戏" },
+        "profile.tab.like":   { en: "Like", zh: "喜欢" },
+        "profile.tab.create": { en: "Create", zh: "创作" },
+      };
+      const entry = map[key];
+      if (entry) el.textContent = entry[currentLang] || entry.en;
+    });
+    const hint = profileView.querySelector(".profile-view__back-hint");
+    if (hint) hint.textContent = tx("back to Agent");
+    renderProfileCards();
+  }
+
+  function openProfileView() {
+    applyProfileLang();
+    profileView.classList.add("is-open");
+    profileView.setAttribute("aria-hidden", "false");
+  }
+  function closeProfileView() {
+    profileView.classList.remove("is-open");
+    profileView.setAttribute("aria-hidden", "true");
+  }
+  profileBackBtn.addEventListener("click", closeProfileView);
+  profileCreateBtn.addEventListener("click", () => {
+    closeProfileView();
+    setTimeout(() => {
+      runMini([
+        { type: "agent", text: "Back. What do you want to make?" },
+        { type: "suggestions", items: [
+          "Make a piece about a rainy alley at 2 AM",
+          "Make something quiet",
+        ]},
+      ]);
     }, 280);
   });
 

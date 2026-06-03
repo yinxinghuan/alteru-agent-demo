@@ -164,6 +164,43 @@
           </div>
         </div>
 
+        <!-- Faux Profile / self - create view — mirrors AlterU Figma node 1:5780 -->
+        <div id="profileView" class="profile-view" aria-hidden="true">
+          <div class="profile-view__toolbar">
+            <button id="profileBack" class="profile-view__icon-btn" type="button" aria-label="Back to Agent">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="11 5 4 12 11 19"/></svg>
+            </button>
+            <span class="profile-view__back-hint">back to Agent</span>
+          </div>
+
+          <div class="profile-view__head">
+            <div class="profile-view__column">
+              <div class="profile-view__identity">
+                <h2 class="profile-view__name">Yin</h2>
+                <button class="profile-view__edit" type="button" aria-label="Edit name">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+              </div>
+              <p class="profile-view__bio" data-i18n-phone="profile.bio">Ava is an outgoing and creative individual with a passion for music.</p>
+              <div class="profile-view__stats">
+                <span><strong>412</strong> <span data-i18n-phone="profile.followers">k followers</span></span>
+              </div>
+              <div class="profile-view__actions">
+                <button class="profile-view__pill profile-view__pill--outline" type="button" data-i18n-phone="profile.setavatar">Set Avatar</button>
+                <button id="profileCreateGame" class="profile-view__pill profile-view__pill--filled" type="button" data-i18n-phone="profile.create">Create Game</button>
+              </div>
+            </div>
+            <div class="profile-view__avatar" aria-hidden="true"></div>
+          </div>
+
+          <div class="profile-view__tabs">
+            <button class="profile-view__tab" type="button" data-i18n-phone="profile.tab.like">Like</button>
+            <button class="profile-view__tab is-active" type="button" data-i18n-phone="profile.tab.create">Create</button>
+          </div>
+
+          <div id="profileCards" class="profile-view__cards"></div>
+        </div>
+
       </div>
       <img class="phone__watermark" src="assets/watermark.svg" alt="" aria-hidden="true" />
     </div>

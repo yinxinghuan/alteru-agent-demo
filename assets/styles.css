@@ -1268,6 +1268,368 @@ code {
   margin-top: 1px;
 }
 
+/* === Profile view (faux AlterU Profile / self - create) ======== */
+
+.profile-view {
+  position: absolute;
+  inset: 44px 0 0 0;  /* leave the phone's status bar visible */
+  background: var(--feed-surface-primary);
+  overflow: hidden;
+  z-index: 21;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+  display: flex;
+  flex-direction: column;
+}
+.profile-view.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.profile-view__toolbar {
+  flex: 0 0 38px;
+  height: 38px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.profile-view__icon-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background .15s, transform .15s;
+}
+.profile-view__icon-btn:hover { background: rgba(255,255,255,0.08); }
+.profile-view__icon-btn:active { transform: scale(0.94); }
+.profile-view__back-hint {
+  color: var(--pink);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--pink-bg);
+  border: 1px solid rgba(245,177,199,0.32);
+  padding: 3px 8px;
+  border-radius: 999px;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity .25s, transform .25s;
+  pointer-events: none;
+}
+.profile-view.is-open .profile-view__back-hint {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: .9s;
+}
+
+/* Profile UI section — 159px tall per Figma */
+.profile-view__head {
+  position: relative;
+  flex: 0 0 auto;
+  margin: 0 auto;
+  padding: 0 25px;
+  width: 100%;
+  max-width: 340px;
+  display: block;
+}
+.profile-view__column {
+  width: 100%;
+  position: relative;
+}
+.profile-view__identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.profile-view__name {
+  margin: 0;
+  font-family: "SF Pro Display", var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 32px;
+  color: var(--text-primary);
+}
+.profile-view__edit {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 999px;
+  transition: background .15s;
+}
+.profile-view__edit:hover { background: rgba(255,255,255,0.08); }
+
+.profile-view__bio {
+  margin: 10px 0 0;
+  width: 240px;
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+.profile-view__stats {
+  margin-top: 12px;
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 32px;
+  color: var(--text-tertiary);
+  display: flex;
+  gap: 6px;
+}
+.profile-view__stats strong {
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
+.profile-view__actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+.profile-view__pill {
+  flex: 1 1 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 32px;
+  border-radius: 16px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .15s;
+  white-space: nowrap;
+}
+.profile-view__pill--outline {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--pink);
+}
+.profile-view__pill--outline:hover {
+  background: rgba(245,177,199,0.06);
+  border-color: rgba(245,177,199,0.4);
+}
+.profile-view__pill--filled {
+  background: var(--pink);
+  border: 1px solid var(--pink);
+  color: #000;
+  font-weight: 600;
+}
+.profile-view__pill--filled:hover { background: var(--pink-strong); border-color: var(--pink-strong); }
+.profile-view__pill:active { transform: scale(0.98); }
+
+/* Avatar — 75×75 round, positioned top-right */
+.profile-view__avatar {
+  position: absolute;
+  top: 0;
+  right: 16px;
+  width: 75px;
+  height: 75px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 30% 30%, #ffd1a8, #8a5a32 70%);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+}
+
+/* Tabs — Like / Create */
+.profile-view__tabs {
+  margin-top: 18px;
+  flex: 0 0 auto;
+  display: flex;
+  width: 100%;
+}
+.profile-view__tab {
+  flex: 1 1 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-default);
+  color: var(--text-tertiary);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 26px;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.profile-view__tab.is-active {
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--text-primary);
+}
+
+/* Card list */
+.profile-view__cards {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 10px 10px 38px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.profile-view__cards::-webkit-scrollbar { width: 4px; }
+.profile-view__cards::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 4px; }
+
+.work-card {
+  background: #000;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.work-card__cover {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 15px;
+}
+.work-card__cover img {
+  position: absolute;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  object-fit: cover;
+  z-index: 0;
+}
+.work-card__cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,1));
+  pointer-events: none;
+  z-index: 1;
+}
+.work-card__chip {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 2px solid;
+}
+.work-card__chip--published {
+  color: var(--bsod-cyan);
+  border-color: var(--bsod-cyan);
+  background: rgba(0,240,255,0.15);
+}
+.work-card__chip--unpublished {
+  color: var(--error);
+  border-color: var(--error);
+  background: rgba(229,57,53,0.15);
+}
+
+.work-card__body {
+  padding: 12px 15px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.work-card__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.work-card__title-col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.work-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  color: var(--bsod-cyan);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.work-card__plays {
+  margin: 0;
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+.work-card__remix {
+  background: #000;
+  border: none;
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.work-card__remix:hover { background: #181818; }
+.work-card__remix img { width: 16px; height: 16px; display: block; }
+.work-card__cta {
+  display: flex;
+  gap: 10px;
+}
+.work-card__action {
+  flex: 1 1 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #fff;
+  transition: background .15s, transform .15s;
+}
+.work-card__action:active { transform: scale(0.98); }
+.work-card__action--play {
+  background: var(--purple);
+}
+.work-card__action--play:hover { background: #8b00bd; }
+.work-card__action--play .cost {
+  color: var(--bsod-cyan);
+  font-weight: 700;
+}
+.work-card__action--delete {
+  background: var(--error);
+}
+.work-card__action--delete:hover { background: #c52a26; }
+.work-card__action--edit {
+  background: var(--bg-card);
+}
+.work-card__action--edit:hover { background: #242424; }
+
 /* === Works mini overlay (embedded after Publish) =============== */
 
 .works-card {
