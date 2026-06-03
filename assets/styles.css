@@ -1633,10 +1633,13 @@ code {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 .work-card__cover {
   position: relative;
+  width: 100%;
   aspect-ratio: 1 / 1;
+  flex-shrink: 0;
   overflow: hidden;
   display: flex;
   align-items: flex-start;
